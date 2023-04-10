@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import defaultImage from './default.jpg';
 
 export default function Painting(props) {
@@ -20,4 +21,8 @@ export default function Painting(props) {
   </div>
 );
 };
+
+Painting.PropTypes = {
+    
+}
   
