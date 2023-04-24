@@ -1,34 +1,50 @@
-import { Component } from 'react';
-import { RecipeList } from './RecipeList/RecipeList';
-import initialRecepies from '../recipes.json';
-import { GlobalStyle } from './GlobalStyle';
-import { Layout } from './Layout/Layout';
-import { RecipeForm } from './RecipeForm/RecipeForm';
+import React, { Component } from 'react';
+import axios from 'axios';
+// import api from '../api/api';
+
+axios.defaults.baseURL = 'https://hn.algolia.com/api/v1';
+
+const ArticleList = ({ articles }) => (
+  <ul>
+    {articles.map(({ objectID, url, title }) => (
+      <li key={objectID}>
+        <a href={url} target="_blank" rel="noreferrer noopener">
+          {title}
+        </a>
+      </li>
+    ))}
+  </ul>
+);
 
 export class App extends Component {
   state = {
-    recipes: initialRecepies,
+    articles: [],
+    isLoading: false,
+    error: null,
   };
 
-  addRecipe = newRecipe => {
-    this.setState(pervState => ({
-      recipes: [...pervState.recipes, newRecipe],
-    }));
-  };
+  async componentDidMount() {
+    this.setState({ isLoading: true });
 
-  deleteRecipe = recipeId => {
-    this.setState(pervState => ({
-      recipes: pervState.recipes.filter(recepie => recepie.id !== recipeId),
-    }));
-  };
+    try {
+      const response = await axios.get('/search?query=react');
+      this.setState({ articles: response.data.hits });
+    } catch (error) {
+      this.setState({ error });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  }
 
   render() {
+    const { articles, isLoading, error } = this.state;
+
     return (
-      <Layout>
-        <RecipeForm onSave={this.addRecipe} />
-        <RecipeList items={this.state.recipes} onDelite={this.deleteRecipe} />
-        <GlobalStyle />
-      </Layout>
+      <div>
+        {error && <p>Whoops, something went wrong: {error.message}</p>}
+        {isLoading && <p>Loading...</p>}
+        {articles.length > 0 && <ArticleList articles={articles} />}
+      </div>
     );
   }
 }
