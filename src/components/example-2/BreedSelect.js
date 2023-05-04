@@ -1,8 +1,7 @@
-import { Component, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { fetchBreeds } from 'api';
 import { ErrorMessage } from './ErorrMessage';
-import { async } from 'q';
 
 const ERROR_MSG =
   'Что-то пошло не так, перезагрузите страницу, вдруг поможет 🥹';
